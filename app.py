@@ -1,19 +1,29 @@
+
 from flask import Flask, render_template, request
 import numpy as np
-
-from tensorflow.keras.preprocessing import image
-import os
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
 import tensorflow as tf
-print("TensorFlow is installed:", tf.__version__)
+import os
+import gdown
+from tensorflow.keras.preprocessing import image
+
 app = Flask(__name__)
 
-# Load the trained model
-MODEL_PATH = "eurosat_cnn_model.h5"
-model = tf.keras.models.load_model(MODEL_PATH)
+# Google Drive File ID (Extracted from the link)
+file_id = "1NkChDFdZX40LiZl9_7x2tMJegqTmrCvI"  # Corrected File ID
 
-# Define class labels (same as during training)
+# Model file path
+MODEL_PATH = "eurosat_cnn_model.h5"
+
+# Check if model exists, if not, download it
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Google Drive...")
+    gdown.download(f"https://drive.google.com/uc?id={file_id}", MODEL_PATH, quiet=False)
+
+# Load the trained model
+model = tf.keras.models.load_model(MODEL_PATH)
+print("Model Loaded Successfully!")
+
+# Define class labels
 class_labels = [
     "AnnualCrop", "Forest", "Highway", "Industrial", "Pasture",
     "PermanentCrop", "Residential", "River", "SeaLake", "HerbaceousVegetation"
@@ -41,13 +51,11 @@ def predict_image(img_path):
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
-        # Get uploaded file
         file = request.files["file"]
         if file:
             file_path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
             file.save(file_path)
 
-            # Get prediction
             result = predict_image(file_path)
 
             return render_template("index.html", prediction=result, img_path=file_path)
