@@ -80,7 +80,8 @@ http://127.0.0.1:5000/
 
 
 # Prediction Result:
-![Screenshot (29)](https://github.com/user-attachments/assets/595a7bf0-b321-4ed9-a8df-6066c6afad85)
+![Screenshot (31)](https://github.com/user-attachments/assets/001dd705-5537-4573-8526-372f2e9e677a)
+
 
 ## 📦 Model Details
 - The model is trained using a **CNN (Convolutional Neural Network)** on the **EuroSAT dataset**.
